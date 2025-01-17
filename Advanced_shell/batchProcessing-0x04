@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# List of Pokémon names to retrieve data for
+pokemon_list=("bulbasaur" "ivysaur" "venusaur" "charmander" "charmeleon")
+
+# Function to fetch data for a given Pokémon
+fetch_data() {
+  pokemon_name=$1
+  echo "Fetching data for $pokemon_name..."
+  curl -s "https://pokeapi.co/api/v2/pokemon/$pokemon_name" -o "$pokemon_name.json"
+  
+  if [ $? -ne 0 ]; then
+    echo "Error fetching data for $pokemon_name" >> errors.txt
+  else
+    echo "Successfully fetched data for $pokemon_name"
+  fi
+}
+
+# Export the function so it's available to subshells
+export -f fetch_data
+
+# Use xargs to fetch data in parallel (4 parallel processes at a time)
+echo "Starting parallel data fetching..."
+echo ${pokemon_list[@]} | xargs -n 1 -P 4 -I {} bash -c "fetch_data {}"
+
+# Wait for all background processes to complete
+wait
+
+echo "Data fetching completed for all Pokémon."
+

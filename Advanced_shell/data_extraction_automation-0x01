@@ -1,14 +1,18 @@
 #!/bin/bash
 
-
+# Read the JSON file created in Task 0
 json_file="data.json"
 
-
+# Extract the name, type, weight, and height using jq, awk, and sed
 name=$(jq -r '.name' "$json_file")
-height=$(jq -r '.height' "$json_file")
-weight=$(jq -r '.weight' "$json_file")
 type=$(jq -r '.types[0].type.name' "$json_file")
+weight=$(jq -r '.weight' "$json_file")
+height=$(jq -r '.height' "$json_file")
 
+# Format the weight and height for readability (convert to kg and meters)
+formatted_weight=$(echo "scale=1; $weight / 10" | bc)   # Assuming weight is in hectograms
+formatted_height=$(echo "scale=1; $height / 10" | bc)   # Assuming height is in decimeters
 
-echo "$name is of type $type, weighs $weight kg, and is $height m tall."
+# Output the result
+echo "$name is of type $type, weighs ${formatted_weight}kg, and is ${formatted_height}m tall."
 

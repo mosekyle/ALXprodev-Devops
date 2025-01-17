@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Pokémon API URL and the Pokémon name
+POKEMON="pikachu"
+API_URL="https://pokeapi.co/api/v2/pokemon/$POKEMON"
+OUTPUT_FILE="data.json"
+ERROR_FILE="errors.txt"
+
+#  API request and save the response to a JSON file
+curl -s "$API_URL" -o "$OUTPUT_FILE"
+
+# Check if the request was successful
+if [ $? -eq 0 ]; then
+    echo "API request successful. Data saved to $OUTPUT_FILE."
+else
+    # Log the error if the request fails
+    echo "$(date) - Error: Failed to retrieve data for $POKEMON" >> "$ERROR_FILE"
+    echo "Error: API request failed. Check $ERROR_FILE for details."
+fi

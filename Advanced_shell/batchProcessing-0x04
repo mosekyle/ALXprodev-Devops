@@ -16,15 +16,16 @@ fetch_data() {
   fi
 }
 
-# Export the function so it's available to subshells
-export -f fetch_data
+# Loop through the Pokémon list and fetch data in the background
+for pokemon in "${pokemon_list[@]}"; do
+  fetch_data "$pokemon" &  # Run fetch_data in the background
+done
 
-# Use xargs to fetch data in parallel (4 parallel processes at a time)
-echo "Starting parallel data fetching..."
-echo ${pokemon_list[@]} | xargs -n 1 -P 4 -I {} bash -c "fetch_data {}"
-
-# Wait for all background processes to complete
-wait
+# Wait for all background processes to complete and display job status
+jobs  # List all background jobs
+wait  # Wait for all background jobs to finish
 
 echo "Data fetching completed for all Pokémon."
+
+
 

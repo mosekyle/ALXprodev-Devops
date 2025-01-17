@@ -1,0 +1,14 @@
+#!/bin/bash
+
+
+json_file="data.json"
+
+
+name=$(jq -r '.name' "$json_file")
+height=$(jq -r '.height' "$json_file")
+weight=$(jq -r '.weight' "$json_file")
+type=$(jq -r '.types[0].type.name' "$json_file")
+
+
+echo "$name is of type $type, weighs $weight kg, and is $height m tall."
+

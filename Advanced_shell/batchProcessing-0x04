@@ -19,13 +19,18 @@ fetch_data() {
 # Loop through the Pokémon list and fetch data in the background
 for pokemon in "${pokemon_list[@]}"; do
   fetch_data "$pokemon" &  # Run fetch_data in the background
+  pid=$!  # Get the process ID of the background job
+  echo "Started background job for $pokemon with PID $pid"
+  
+  # Optionally, kill a background job if needed (this is an example)
+  # For instance, we can kill the job after some condition or time
+  sleep 2  # Example: sleep for 2 seconds before killing
+  kill $pid  # Kill the background job using its PID
+  echo "Killed background job for $pokemon with PID $pid"
 done
 
-# Wait for all background processes to complete and display job status
-jobs  # List all background jobs
-wait  # Wait for all background jobs to finish
+# Wait for all background jobs to complete (though we are killing them in this case)
+wait
 
 echo "Data fetching completed for all Pokémon."
-
-
 

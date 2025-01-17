@@ -1,0 +1,45 @@
+#!/bin/bash
+
+
+pokemons=("bulbasaur" "ivysaur" "venusaur" "charmander" "charmeleon")
+
+# Create a CSV file to store the summary data
+output_file="pokemon_summary.csv"
+echo "Name,Height,Weight" > "$output_file"  # Write the header to the CSV
+
+# Initialize variables to calculate the averages
+total_height=0
+total_weight=0
+count=0
+
+# Loop through each Pokémon
+for pokemon in "${pokemons[@]}"; do
+  # Get the Pokémon's data from the corresponding JSON file
+  json_file="${pokemon}.json"
+  
+  # Extract name, height, and weight using jq
+  name=$(jq -r '.name' "$json_file")
+  height=$(jq -r '.height' "$json_file")
+  weight=$(jq -r '.weight' "$json_file")
+
+  # Convert height and weight to human-readable format
+  formatted_height=$(echo "scale=1; $height / 10" | bc)  # Convert decimeters to meters
+  formatted_weight=$(echo "scale=1; $weight / 10" | bc)  # Convert hectograms to kilograms
+
+  # Append the data to the CSV file
+  echo "$name,$formatted_height,$formatted_weight" >> "$output_file"
+
+  # Accumulate totals for average calculation
+  total_height=$(echo "$total_height + $formatted_height" | bc)
+  total_weight=$(echo "$total_weight + $formatted_weight" | bc)
+  count=$((count + 1))
+done
+
+# Calculate averages using awk
+average_height=$(echo "$total_height / $count" | bc -l)
+average_weight=$(echo "$total_weight / $count" | bc -l)
+
+# Print the averages
+echo "Average Height: $average_height meters"
+echo "Average Weight: $average_weight kg"
+
